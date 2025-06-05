@@ -1,0 +1,107 @@
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="./assets/css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    <title>Tap & Win</title>
+  </head>
+  <body>
+    <h1>Tap & win</h1>
+    <div id="info">
+      <span>Time: </span><span id="time">60</span><span> seconds</span><br>
+      <span>Score: </span><span id="score">0</span>
+   </div>
+    <button class="startbtn" onclick="startGame()">Start Game</button>
+    <ul id="game-grid">
+      <li class="cell" onclick="handleClick(0)"></li>
+      <li class="cell" onclick="handleClick(1)"></li>
+      <li class="cell" onclick="handleClick(2)"></li>
+      <li class="cell" onclick="handleClick(3)"></li>
+      <li class="cell" onclick="handleClick(4)"></li>
+      <li class="cell" onclick="handleClick(5)"></li>
+      <li class="cell" onclick="handleClick(6)"></li>
+      <li class="cell" onclick="handleClick(7)"></li>
+      <li class="cell" onclick="handleClick(8)"></li>
+      <li class="cell" onclick="handleClick(9)"></li>
+      <li class="cell" onclick="handleClick(10)"></li>
+      <li class="cell" onclick="handleClick(11)"></li>
+      <li class="cell" onclick="handleClick(12)"></li>
+      <li class="cell" onclick="handleClick(13)"></li>
+      <li class="cell" onclick="handleClick(14)"></li>
+      <li class="cell" onclick="handleClick(15)"></li>
+    </ul>
+  </body>
+  <script>
+    const cells = document.querySelectorAll('.cell');
+    const scoreDisplay = document.getElementById('score');
+    const timeDisplay = document.getElementById('time');
+    let currentActive = -1;
+    let score = 0;
+    let timeLeft = 60;
+    let gameTimer = null;
+    let roundTimeout = null;
+    let isPlaying = false;
+
+    const startGame = () => {
+      if (isPlaying) return;
+      isPlaying = true;
+      score = 0;
+      timeLeft = 60;
+      scoreDisplay.innerText = score;
+      timeDisplay.innerText = timeLeft;
+      gameTimer = setInterval(() => {
+        timeLeft--;
+        timeDisplay.innerText = timeLeft;
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+      startNextRound();
+    };
+
+    const startNextRound = () => {
+      if (!isPlaying) return;
+      if (currentActive !== -1) {
+        cells[currentActive].classList.remove('active');
+        cells[currentActive].innerText = "";
+      }
+      currentActive = Math.floor(Math.random() * cells.length);
+      cells[currentActive].classList.add('active');
+      cells[currentActive].innerText = "🔥"; 
+      if (roundTimeout) clearTimeout(roundTimeout);
+      roundTimeout = setTimeout(() => {
+        if (currentActive !== -1) {
+          cells[currentActive].classList.remove('active');
+          cells[currentActive].innerText = "";
+          currentActive = -1;
+        }
+        startNextRound();
+      }, 1000);
+    };
+
+    const endGame = () => {
+      isPlaying = false;
+      clearInterval(gameTimer);
+      clearTimeout(roundTimeout);
+      if (currentActive !== -1) {
+        cells[currentActive].classList.remove('active');
+        cells[currentActive].innerText = "";
+        currentActive = -1;
+      }
+      alert(`Game Over! Your score is: ${score}`);
+    };
+
+      const handleClick = (index) => {
+        if (!isPlaying) return;
+        if (index === currentActive) {
+          score++;
+          scoreDisplay.innerText = score;
+          cells[currentActive].classList.remove('active');
+          cells[currentActive].innerText = "";
+          currentActive = -1;
+          startNextRound();
+        }
+      };
+  </script>
+</html>
